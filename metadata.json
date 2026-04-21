@@ -1,6 +1,6 @@
 {
-  "name": "XML DataHub",
-  "description": "Un hub complet démontrant les applications du XML : gestion, validation XSD, transformation XSLT, conversion JSON et SOAP.",
+  "name": "XML DataHub Pro",
+  "description": "Plateforme avancée d'orchestration XML avec architecture distribuée, validation XSD rigoureuse, moteur XSLT dynamique et passerelle SOAP sécurisée. Interface néon futuriste avec guide utilisateur intégré.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
