@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <user id="U001">
+        <username>admin</username>
+        <role>Administrator</role>
+        <email>admin@xmlhub.dev</email>
+        <status>active</status>
+    </user>
+    <user id="U002">
+        <username>jdoe</username>
+        <role>Developer</role>
+        <email>john.doe@xmlhub.dev</email>
+        <status>active</status>
+    </user>
+</users>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cv>
+    <personal-info>
+        <name>Alex Rivera</name>
+        <title>Senior Full-Stack Engineer</title>
+        <email>alex.rivera@xmlhub.dev</email>
+        <phone>+33 6 12 34 56 78</phone>
+        <location>Paris, France</location>
+    </personal-info>
+    <experience>
+        <job>
+            <company>TechFlow Systems</company>
+            <position>Lead Developer</position>
+            <period>2020 - Present</period>
+            <description>Leading a team of 12 developers on distributed systems using XML/JSON messaging.</description>
+        </job>
+        <job>
+            <company>DataCore Labs</company>
+            <position>XML Integration Specialist</position>
+            <period>2017 - 2020</period>
+            <description>Designed complex XSD schemas and XSLT transformations for major financial clients.</description>
+        </job>
+    </experience>
+    <skills>
+        <skill>TypeScript / Node.js</skill>
+        <skill>XML / XSLT / XPath</skill>
+        <skill>Systemes Distribués</skill>
+        <skill>React / Tailwind / Bootstrap</skill>
+    </skills>
+</cv>

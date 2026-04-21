@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+    <product id="P001">
+        <name>Neon Cyber Keyboard</name>
+        <category>Peripherals</category>
+        <description>Mechanical keyboard with RGB neon backlight.</description>
+        <price currency="USD">129.99</price>
+        <stock>45</stock>
+    </product>
+    <product id="P002">
+        <name>Ultrawide Curved Monitor</name>
+        <category>Dispay</category>
+        <description>34-inch curved monitor for immersive gaming.</description>
+        <price currency="USD">499.99</price>
+        <stock>12</stock>
+    </product>
+    <product id="P003">
+        <name>RGB Gaming Mouse</name>
+        <category>Peripherals</category>
+        <description>Precision mouse with custom neon profiles.</description>
+        <price currency="USD">59.99</price>
+        <stock>150</stock>
+    </product>
+</catalog>

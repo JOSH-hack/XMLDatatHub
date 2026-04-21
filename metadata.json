@@ -1,0 +1,6 @@
+{
+  "name": "XML DataHub",
+  "description": "Un hub complet démontrant les applications du XML : gestion, validation XSD, transformation XSLT, conversion JSON et SOAP.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

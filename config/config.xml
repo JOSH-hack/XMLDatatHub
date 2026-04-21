@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <app-name>XML DataHub</app-name>
+    <theme>
+        <mode>dark</mode>
+        <primary-color>#00f3ff</primary-color>
+        <secondary-color>#bc13fe</secondary-color>
+    </theme>
+    <localization>
+        <language>fr</language>
+        <timezone>Europe/Paris</timezone>
+    </localization>
+    <api-settings>
+        <endpoint>/api/xml-hub</endpoint>
+        <version>1.1.0</version>
+        <debug-mode>true</debug-mode>
+    </api-settings>
+</config>
