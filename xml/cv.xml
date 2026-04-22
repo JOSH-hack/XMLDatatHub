@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cv>
-    <personal-info>
-        <name>Alex Rivera</name>
-        <title>Senior Full-Stack Engineer</title>
-        <email>alex.rivera@xmlhub.dev</email>
-        <phone>+33 6 12 34 56 78</phone>
-        <location>Paris, France</location>
-    </personal-info>
+    <informations-personnels>
+        <nom>BEDEL Josué</nom>
+        <titre>Senior Full-Stack Engineer</titre>
+        <email>josuebedelflows@xmlhub.dev</email>
+        <tel>+228 90 80 70 60</tel>
+        <adresse>Frankfurt, Germany</adreese>
+    </informations-personnels>
     <experience>
         <job>
-            <company>TechFlow Systems</company>
-            <position>Lead Developer</position>
-            <period>2020 - Present</period>
+            <compagnie>TechFlow Systems</compagnie>
+            <position>Lead developer</position>
+            <periode>2020 - Maintenant</periode>
             <description>Leading a team of 12 developers on distributed systems using XML/JSON messaging.</description>
         </job>
         <job>
