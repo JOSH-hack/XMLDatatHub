@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<catalogue>
-    <produit id="P001">
+<catalogue metadata-version="2.1" db-engine="XML-NODE-X" last-indexed="2026-04-23">
+    <produit id="P001" schema-version="1.0">
         <nom>Clavier cyber néon</nom>
         <categorie>Peripheriques</categorie>
         <description>Clavier mécanique avec retroéclairage néon.</description>
         <prix currency="USD">129.99</prix>
         <stock>45</stock>
+        <db-info>
+            <entry-created>2024-01-15</entry-created>
+            <hash>a8f23c9</hash>
+        </db-info>
     </produit>
-    <produit id="P002">
+    <produit id="P002" schema-version="1.0">
         <nom>Ultrawide Curved Monitor</nom>
         <categorie>Dispay</categorie>
         <description>Moniteur courbé de 34 pouces pour un jeu immersif.</description>
         <prix currency="USD">499.99</prix>
         <stock>12</stock>
+        <db-info>
+            <entry-created>2024-01-18</entry-created>
+            <hash>b7e11d2</hash>
+        </db-info>
     </produit>
-    <produit id="P003">
+    <produit id="P003" schema-version="1.0">
         <nom>RGB Gaming Mouse</nom>
         <categorie>Peripheriques</categorie>
         <description>Souris de jeu avec profils néon personnalisables.</description>
         <prix currency="USD">59.99</prix>
         <stock>150</stock>
+        <db-info>
+            <entry-created>2024-02-01</entry-created>
+            <hash>c9d33a1</hash>
+        </db-info>
     </produit>
 </catalogue>

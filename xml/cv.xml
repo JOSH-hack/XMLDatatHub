@@ -5,20 +5,20 @@
         <titre>Senior Full-Stack Engineer</titre>
         <email>josuebedelflows@xmlhub.dev</email>
         <tel>+228 90 80 70 60</tel>
-        <adresse>Frankfurt, Germany</adreese>
+        <adresse>Frankfurt, Germany</adresse>
     </informations-personnels>
     <experience>
         <job>
             <compagnie>TechFlow Systems</compagnie>
             <position>Lead developer</position>
             <periode>2020 - Maintenant</periode>
-            <description>Leading a team of 12 developers on distributed systems using XML/JSON messaging.</description>
+            <description>Direction d'une équipe de 12 développeurs sur des systèmes distribués utilisant la messagerie XML/JSON.</description>
         </job>
         <job>
-            <company>DataCore Labs</company>
-            <position>XML Integration Specialist</position>
-            <period>2017 - 2020</period>
-            <description>Designed complex XSD schemas and XSLT transformations for major financial clients.</description>
+            <compagnie>DataCore Labs</compagnie>
+            <position>Spécialiste Intégration XML</position>
+            <periode>2017 - 2020</periode>
+            <description>Conception de schémas XSD complexes et de transformations XSLT pour des clients financiers majeurs.</description>
         </job>
     </experience>
     <skills>

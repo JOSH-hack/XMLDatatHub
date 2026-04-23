@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="catalog">
+    <xs:element name="catalogue">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="product" maxOccurs="unbounded">
+                <xs:element name="produit" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="name" type="xs:string"/>
-                            <xs:element name="category" type="xs:string"/>
+                            <xs:element name="nom" type="xs:string"/>
+                            <xs:element name="categorie" type="xs:string"/>
                             <xs:element name="description" type="xs:string"/>
-                            <xs:element name="price">
+                            <xs:element name="prix">
                                 <xs:complexType>
                                     <xs:simpleContent>
                                         <xs:extension base="xs:decimal">
