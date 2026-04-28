@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Database, 
   RefreshCcw, 
+  RefreshCw,
+  Search,
   FileCheck, 
   FileCode, 
   LayoutDashboard, 
@@ -17,7 +19,8 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  Cpu
+  Cpu,
+  AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 // @ts-ignore
@@ -214,16 +217,78 @@ const Catalog = () => {
   const [viewMode, setViewMode] = useState<'xml' | 'html'>('html');
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<{ valid: boolean, message: string } | null>(null);
+  const [xpathQuery, setXpathQuery] = useState('/catalogue/produit');
+  const [queryError, setQueryError] = useState('');
+  const [catalogHtml, setCatalogHtml] = useState('');
+  const [xsltContent, setXsltContent] = useState('');
 
   useEffect(() => {
     fetch('/api/xml/products')
       .then(res => res.text())
-      .then(async xml => {
-        setXmlContent(xml);
-        const html = await transformXml(xml, 'products');
-        setHtmlContent(html);
-      });
+      .then(xml => setXmlContent(xml));
+
+    fetch('/api/xslt/products')
+      .then(res => res.text())
+      .then(xslt => setXsltContent(xslt));
   }, []);
+
+  useEffect(() => {
+    const applyCatalogTransform = async () => {
+      try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+        const xsltDoc = parser.parseFromString(xsltContent, 'text/xml');
+
+        if (!xmlContent || !xsltContent) return;
+
+        // Evaluate XPath
+        let filteredXml = '';
+        try {
+          const result = xmlDoc.evaluate(xpathQuery, xmlDoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+          
+          if (result.snapshotLength === 0) {
+            filteredXml = '<catalogue />'
+          } else {
+            const builder = new XMLSerializer();
+            let nodesHtml = '';
+            for (let i = 0; i < result.snapshotLength; i++) {
+              const node = result.snapshotItem(i);
+              if (node) nodesHtml += builder.serializeToString(node);
+            }
+            
+            // Re-wrap in root tag if query didn't return the root itself
+            if (nodesHtml.startsWith('<produit')) {
+                filteredXml = `<catalogue>${nodesHtml}</catalogue>`;
+            } else {
+                filteredXml = nodesHtml;
+            }
+          }
+          setQueryError('');
+        } catch (e) {
+          setQueryError('Expression XPath invalide');
+          filteredXml = xmlContent; // Fallback to raw xml
+        }
+
+        const processor = new XSLTProcessor();
+        processor.importStylesheet(xsltDoc);
+        
+        const filteredDoc = parser.parseFromString(filteredXml, 'text/xml');
+        const resultDoc = processor.transformToFragment(filteredDoc, document);
+        
+        if (resultDoc) {
+          const div = document.createElement('div');
+          div.appendChild(resultDoc);
+          setCatalogHtml(div.innerHTML);
+        }
+      } catch (e) {
+        console.error('Transform error:', e);
+      }
+    };
+    
+    if (xmlContent && xsltContent) {
+      applyCatalogTransform();
+    }
+  }, [xmlContent, xsltContent, xpathQuery]);
 
   const runValidation = async () => {
     setIsValidating(true);
@@ -258,6 +323,51 @@ const Catalog = () => {
             <ShieldCheck size={14} className={isValidating ? 'animate-spin' : ''} /> 
             {isValidating ? 'AUTO-VALIDATING SCHEMA...' : 'FORCE XSD VALIDATION'}
           </button>
+        </div>
+      </div>
+
+      {/* Small Database Query Editor / Terminal */}
+      <div className="bg-[#050508] border border-cyan-500/20 rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <div className="bg-[#1a1a24] px-4 py-2 flex items-center justify-between border-b border-white/5">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5 mr-4">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+            </div>
+            <Terminal size={14} className="text-cyan-400" />
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">XML_QUERY_ENGINE v2.4</span>
+          </div>
+          <div className="flex items-center gap-4 text-[9px] font-mono text-gray-500">
+            <span>STATUS: ONLINE</span>
+            <span>AUTH: ROOT_DBA</span>
+          </div>
+        </div>
+        <div className="p-4 bg-grid-dark relative">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 text-cyan-500 font-mono text-sm select-none animate-pulse">ais-user@db (~)$</div>
+            <div className="flex-1 space-y-3">
+              <input 
+                type="text" 
+                value={xpathQuery}
+                onChange={(e) => setXpathQuery(e.target.value)}
+                className="w-full bg-transparent border-none text-cyan-50 font-mono text-sm p-0 focus:ring-0 placeholder:text-gray-800"
+                placeholder="Entrez votre requête XPath... (ex: /catalogue/produit[stock > 10])"
+              />
+              <div className="flex flex-wrap gap-2 pt-2 opacity-60 hover:opacity-100 transition-opacity">
+                <span className="text-[9px] text-gray-600 font-mono py-1 uppercase">Préréglages:</span>
+                <button onClick={() => setXpathQuery('/catalogue/produit')} className="text-[9px] bg-white/5 px-2 py-1 rounded hover:bg-cyan-500/20 hover:text-cyan-400 font-mono transition-all">SELECT *</button>
+                <button onClick={() => setXpathQuery('/catalogue/produit[stock < 20]')} className="text-[9px] bg-white/5 px-2 py-1 rounded hover:bg-cyan-500/20 hover:text-cyan-400 font-mono transition-all">LOW_STOCK</button>
+                <button onClick={() => setXpathQuery('/catalogue/produit[prix > 50]')} className="text-[9px] bg-white/5 px-2 py-1 rounded hover:bg-cyan-500/20 hover:text-cyan-400 font-mono transition-all">PREMIUM_ITEMS</button>
+                <button onClick={() => setXpathQuery('/catalogue/produit[categorie="Peripheriques"]')} className="text-[9px] bg-white/5 px-2 py-1 rounded hover:bg-cyan-500/20 hover:text-cyan-400 font-mono transition-all">FILTER:PERI</button>
+              </div>
+            </div>
+          </div>
+          {queryError && (
+            <div className="mt-2 text-red-500 font-mono text-[10px] animate-pulse flex items-center gap-2">
+              <AlertCircle size={10} /> {queryError}
+            </div>
+          )}
         </div>
       </div>
 
@@ -338,7 +448,7 @@ const Catalog = () => {
                   {viewMode === 'xml' ? (
                     <pre className="text-cyan-100/70 border-none bg-transparent">{xmlContent}</pre>
                   ) : (
-                    <div className="rendered-content" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                    <div className="rendered-content" dangerouslySetInnerHTML={{ __html: catalogHtml }} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -668,51 +778,136 @@ const ConfigView = () => {
 
     if (!config) return <div className="text-center p-20 animate-pulse text-gray-600 uppercase tracking-widest text-xs">Synchronizing Nodes...</div>;
 
+    const xmlPowerFeatures = [
+        {
+            title: "Validation Sémantique",
+            icon: ShieldCheck,
+            desc: "Contrairement au JSON, le XML avec XSD permet de définir des contrats de données stricts (types, patterns, énumérations) validés nativement par le processeur."
+        },
+        {
+            title: "Transformation Découplée",
+            icon: RefreshCw,
+            desc: "Le XSLT permet de transformer les données XML en n'importe quel format (HTML, PDF, CSV) sans modifier une seule ligne de code JavaScript."
+        },
+        {
+            title: "Adressage XPath",
+            icon: Search,
+            desc: "Le langage XPath permet d'extraire des fragments de données complexes avec une précision chirurgicale, évitant les parcours de boucle coûteux."
+        },
+        {
+            title: "Structure Hiérarchique",
+            icon: Database,
+            desc: "Idéal pour les documents complexes avec des relations imbriquées (metadata, namespaces) que les bases relationnelles peinent à modéliser sans jointures lourdes."
+        }
+    ];
+
     return (
-        <div className="flex flex-col gap-6">
-            <div className="bg-[#0a0a0f] neon-border-cyan rounded-lg overflow-hidden">
-                <div className="card-header-styled">System Configuration Metrics</div>
-                <div className="p-8 grid grid-cols-3 gap-8">
-                    <div className="space-y-2">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Application Name</span>
-                        <p className="text-xl text-white font-light">{config['app-name']}</p>
-                    </div>
-                    <div className="space-y-2">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Theme Definition</span>
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs uppercase text-purple-400 font-bold">{config.theme.mode}</span>
-                            <div className="flex gap-1">
-                                <div className="w-3 h-3 rounded-full" style={{ background: config.theme['primary-color'] }}></div>
-                                <div className="w-3 h-3 rounded-full" style={{ background: config.theme['secondary-color'] }}></div>
+        <div className="flex flex-col gap-6 overflow-auto max-h-full pr-2 custom-scrollbar pb-10">
+            <div className="grid grid-cols-12 gap-6">
+                <div className="col-span-8 flex flex-col gap-6">
+                    <div className="bg-[#0a0a0f] glass neon-border-cyan rounded-lg overflow-hidden">
+                        <div className="card-header-styled">System Configuration Metrics</div>
+                        <div className="p-8 grid grid-cols-3 gap-8">
+                            <div className="space-y-2">
+                                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Application Name</span>
+                                <p className="text-xl text-white font-light">{config['app-name']}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Theme Definition</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs uppercase text-purple-400 font-bold">{config.theme.mode}</span>
+                                    <div className="flex gap-1">
+                                        <div className="w-3 h-3 rounded-full" style={{ background: config.theme['primary-color'] }}></div>
+                                        <div className="w-3 h-3 rounded-full" style={{ background: config.theme['secondary-color'] }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Locale Context</span>
+                                <p className="text-xs text-gray-300">{config.localization.language} / {config.localization.timezone}</p>
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Locale Context</span>
-                        <p className="text-xs text-gray-300">{config.localization.language} / {config.localization.timezone}</p>
+
+                    <div className="bg-[#0a0a0f] border border-gray-800 rounded-lg overflow-hidden glass">
+                        <div className="card-header-styled bg-white/5">Architecture Discovery: Le Pouvoir du XML-Native</div>
+                        <div className="p-8 grid grid-cols-2 gap-8">
+                            {xmlPowerFeatures.map((feature, i) => (
+                                <motion.div 
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all group"
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                                            <feature.icon size={16} />
+                                        </div>
+                                        <h4 className="text-sm font-bold text-white uppercase tracking-tight">{feature.title}</h4>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400 leading-relaxed font-light">{feature.desc}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-span-4 flex flex-col gap-6">
+                    <div className="bg-[#0a0a0f] border border-gray-800 rounded-lg overflow-hidden glass h-full">
+                        <div className="card-header-styled border-b border-white/5 bg-white/5">API Core Manifest</div>
+                        <div className="p-6 h-full flex flex-col">
+                            <div className="space-y-4 text-[11px] flex-1">
+                                <div className="flex flex-col gap-1 border-b border-gray-900 pb-3">
+                                    <span className="text-gray-500 uppercase tracking-widest text-[9px] font-bold">Service Endpoint</span>
+                                    <span className="code-font text-cyan-400 break-all">{config['api-settings'].endpoint}</span>
+                                </div>
+                                <div className="flex flex-col gap-1 border-b border-gray-900 pb-3">
+                                    <span className="text-gray-500 uppercase tracking-widest text-[9px] font-bold">Hub Protocol</span>
+                                    <span className="code-font text-purple-400">XML-NODE-X v{config['api-settings'].version}</span>
+                                </div>
+                                <div className="flex flex-col gap-1 border-b border-gray-900 pb-3">
+                                    <span className="text-gray-500 uppercase tracking-widest text-[9px] font-bold">Data Serialization</span>
+                                    <span className="text-white font-mono">native/dom-lvl3</span>
+                                </div>
+                                <div className="flex flex-col gap-1 border-b border-gray-900 pb-3">
+                                    <span className="text-gray-500 uppercase tracking-widest text-[9px] font-bold">State Management</span>
+                                    <span className="text-green-500 font-bold uppercase">Acid-Compliant</span>
+                                </div>
+                                <div className="flex flex-col gap-1 border-b border-gray-900 pb-3">
+                                    <span className="text-gray-500 uppercase tracking-widest text-[9px] font-bold">Security Engine</span>
+                                    <span className="text-white">HMAC-SHA256 Sig</span>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-6 p-4 bg-cyan-400/5 rounded-xl border border-cyan-400/20 text-center">
+                                <div className="text-[32px] font-black text-cyan-400 code-font mb-1 tracking-tighter">99.98%</div>
+                                <div className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Disponibilité du Hub</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-[#0a0a0f] border border-gray-800 rounded-lg overflow-hidden">
-                <div className="card-header-styled">API Core Manifest</div>
+            <div className="bg-[#0a0a0f] border border-gray-800 rounded-lg overflow-hidden glass mt-2">
+                <div className="card-header-styled bg-white/5">Diagnostic Logging Stack</div>
                 <div className="p-6">
-                    <div className="grid grid-cols-2 gap-8 text-[11px]">
-                        <div className="flex justify-between border-b border-gray-900 pb-2">
-                            <span className="text-gray-500">Service Endpoint</span>
-                            <span className="code-font text-cyan-400">{config['api-settings'].endpoint}</span>
+                    <div className="grid grid-cols-4 gap-6 text-center">
+                        <div className="p-4 bg-black/40 rounded border border-white/5">
+                            <span className="block text-[8px] text-gray-500 mb-1">TOTAL_REQUESTS</span>
+                            <span className="text-lg text-white font-mono tracking-tighter">14,204</span>
                         </div>
-                        <div className="flex justify-between border-b border-gray-900 pb-2">
-                            <span className="text-gray-500">Hub Protocol Version</span>
-                            <span className="code-font text-purple-400">v{config['api-settings'].version}</span>
+                        <div className="p-4 bg-black/40 rounded border border-white/5">
+                            <span className="block text-[8px] text-gray-500 mb-1">XSLT_OPS</span>
+                            <span className="text-lg text-white font-mono tracking-tighter">3,812</span>
                         </div>
-                        <div className="flex justify-between border-b border-gray-900 pb-2">
-                            <span className="text-gray-500">Diagnostic Intercept</span>
-                            <span className="text-green-500 font-bold">ENABLED</span>
+                        <div className="p-4 bg-black/40 rounded border border-white/5">
+                            <span className="block text-[8px] text-gray-500 mb-1">XSD_ERRORS</span>
+                            <span className="text-lg text-red-500 font-mono tracking-tighter">0.03%</span>
                         </div>
-                        <div className="flex justify-between border-b border-gray-900 pb-2">
-                            <span className="text-gray-500">Distributed Node State</span>
-                            <span className="text-cyan-400 font-bold">STABLE</span>
+                        <div className="p-4 bg-black/40 rounded border border-white/5">
+                            <span className="block text-[8px] text-gray-500 mb-1">THROUGHPUT</span>
+                            <span className="text-lg text-cyan-400 font-mono tracking-tighter">2.4 Gbps</span>
                         </div>
                     </div>
                 </div>
