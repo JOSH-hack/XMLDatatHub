@@ -262,21 +262,23 @@ const Catalog = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+        <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 glass">
             <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-widest block mb-1">Indexation XPath</span>
-            <p className="text-lg text-white font-mono">STABLE</p>
+            <p className="text-lg text-white font-mono flex items-center gap-2">
+              STABLE <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span>
+            </p>
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <span className="text-[9px] text-purple-400 font-bold uppercase tracking-widest block mb-1">Architecture</span>
-            <p className="text-lg text-white font-mono">HIÉRARCHIQUE</p>
+        <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 glass">
+            <span className="text-[9px] text-purple-400 font-bold uppercase tracking-widest block mb-1">Engine Architecture</span>
+            <p className="text-lg text-white font-mono">FILE-BASED</p>
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <span className="text-[9px] text-green-400 font-bold uppercase tracking-widest block mb-1">Conformité XSD</span>
-            <p className="text-lg text-white font-mono">STRICTE</p>
+        <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 glass">
+            <span className="text-[9px] text-green-400 font-bold uppercase tracking-widest block mb-1">Transaction Safety</span>
+            <p className="text-lg text-white font-mono">ACID-LIKE</p>
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Format de Données</span>
-            <p className="text-lg text-white font-mono">XML/DOM</p>
+        <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 glass">
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Schema Compliance</span>
+            <p className="text-lg text-white font-mono">ENFORCED</p>
         </div>
       </div>
 
@@ -320,9 +322,10 @@ const Catalog = () => {
             </div>
             <div className="p-8 overflow-auto flex-1 bg-grid relative">
               <div className="absolute top-2 right-4 text-[9px] text-gray-700 font-mono select-none">DATA_PROTOCOL: XML-NODE-7 // STORAGE_ENGINE: FILER // QUERIES_EXECUTED: 14</div>
-              <div className="absolute bottom-4 right-4 flex gap-4 pointer-events-none opacity-20">
-                <div className="text-[10px] text-cyan-400 font-mono">SELECT * FROM products WHERE stock &gt; 0</div>
-                <div className="text-[10px] text-purple-400 font-mono">ORDER BY category ASC</div>
+              <div className="absolute bottom-4 right-4 flex flex-col items-end gap-1 pointer-events-none opacity-20">
+                <div className="text-[10px] text-cyan-400 font-mono tracking-tighter">SELECT * FROM products WHERE stock &gt; 0</div>
+                <div className="text-[10px] text-purple-400 font-mono tracking-tighter">JOIN metadata ON products.id = metadata.ref_id</div>
+                <div className="text-[10px] text-white/50 font-mono tracking-tighter">QUERY_TIME: 12ms // BUFFER_HIT: 94%</div>
               </div>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -454,7 +457,7 @@ const CVGenerator = () => {
             </div>
 
             <div className="grid grid-cols-12 gap-6 flex-1 overflow-hidden">
-                <div className="col-span-5 flex flex-col gap-4 overflow-hidden">
+                <div className="col-span-4 flex flex-col gap-4 overflow-hidden">
                     <div className="bg-[#0a0a0f]/80 glass border border-white/5 rounded-lg overflow-hidden flex flex-col flex-1">
                         <div className="card-header-styled flex justify-between items-center bg-white/5">
                             <span className="flex items-center gap-2"><FileCode size={14} className="text-purple-400" /> Éditeur XML (Français)</span>
@@ -476,7 +479,7 @@ const CVGenerator = () => {
                     )}
                 </div>
                 
-                <div className="col-span-7 flex flex-col overflow-hidden">
+                <div className="col-span-8 flex flex-col overflow-hidden">
                     <div className="bg-[#0a0a0f]/80 glass neon-border-purple rounded-lg overflow-hidden flex-1 flex flex-col">
                         <div className="card-header-styled border-b border-white/5">
                             <div className="flex items-center gap-2 font-bold tracking-wider">

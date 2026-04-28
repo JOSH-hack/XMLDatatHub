@@ -10,13 +10,16 @@
                     <div class="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 blur-3xl -mr-12 -mt-12 group-hover:bg-cyan-500/10 transition-all"></div>
                     
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="text-[9px] bg-cyan-500/10 text-cyan-500 px-2 py-0.5 rounded border border-cyan-500/20 font-mono tracking-tighter">UID: <xslt:value-of select="@id"/></span>
+                        <span class="text-[9px] bg-cyan-500/10 text-cyan-500 px-2 py-0.5 rounded border border-cyan-500/20 font-mono tracking-tighter uppercase">Query_ID: <xslt:value-of select="@id"/></span>
                         <xslt:if test="db-info/entry-created">
-                            <span class="text-[9px] text-gray-700 font-mono italic">Indexed: <xslt:value-of select="db-info/entry-created"/></span>
+                            <span class="text-[9px] text-gray-700 font-mono italic">Row_Added: <xslt:value-of select="db-info/entry-created"/></span>
                         </xslt:if>
                     </div>
 
-                    <h3 class="text-white font-bold text-lg mb-1 group-hover:text-cyan-400 transition-colors"><xslt:value-of select="nom"/></h3>
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="text-white font-bold text-lg group-hover:text-cyan-400 transition-colors"><xslt:value-of select="nom"/></h3>
+                        <span class="text-[8px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-mono">HASH: <xslt:value-of select="db-info/hash"/></span>
+                    </div>
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4 flex items-center gap-2">
                         <div class="w-1 h-1 bg-cyan-500 rounded-full"></div> <xslt:value-of select="categorie"/>
                     </p>
